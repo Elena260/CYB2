@@ -16,6 +16,7 @@
     $hash = hash("sha256", $pwd); // получаем hash пароля для проверки в базе данных 
     include("c:/xampp/params/billing.php");  // Это уязвимо , строчка ниже. 
     $conn = mysqli_connect("$db_server","$db_user","$db_pwd","billing"); // коннектимся к базе для проверки 
+    // это уязвимо , но проблему пока отложим
     $sql = "SELECT*FROM users WHERE login = '$user' AND Pwdhash = '$hash'";// запрос есть ли в базе данных эти данные
     $query= mysqli_query($conn, $sql);// получаем результат нашего запроса в переменную $query
     $result = mysqli_fetch_all($query);// в этой переменной окажутся записи из запроса, эти записи 
