@@ -16,12 +16,15 @@
     $hash = hash("sha256", $pwd); // получаем hash пароля для проверки в базе данных 
     include("c:/xampp/params/billing.php");  // Это уязвимо , строчка ниже. 
     $conn = mysqli_connect("$db_server","$db_user","$db_pwd","billing"); // коннектимся к базе для проверки 
-    // это уязвимо , но проблему пока отложим
-    $sql = "SELECT*FROM users WHERE login = '$user' AND Pwdhash = '$hash'";// запрос есть ли в базе данных эти данные
-    $query= mysqli_query($conn, $sql);// получаем результат нашего запроса в переменную $query
-    $result = mysqli_fetch_all($query);// в этой переменной окажутся записи из запроса, эти записи 
-    //сложный объект , т к это не строка ,  для их прочтения используется специальная функция
-    
+    //$sql = "SELECT*FROM users WHERE login = '$user' AND Pwdhash = '$hash'";// запрос есть ли в базе данных эти данные
+    //$query= mysqli_query($conn, $sql);// получаем результат нашего запроса в переменную $query
+    //$result = mysqli_fetch_all($query);// в этой переменной окажутся записи из запроса, эти записи 
+    //сложный объект , т к это не строка ,  для их прочтения используется специальная функция$sql = "SELECT*FROM users WHERE login = ? AND Pwdhash = ?";
+    $statement = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($statement,"ss",$user, $hash);
+    mysqli_stmt_execute($statement);
+    $cursor = mysqli_stmt_get_result($statement);
+    $result = mysqli_fetch_all($cursor); 
     mysqli_close($conn); // закрываем коннекцию , что бы не нагружать сервер 
     //var_dump($result);  // это специальная функция для вывода на экран сложных объектов , echo такие объекты не может вывести 
    
